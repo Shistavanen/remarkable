@@ -10,6 +10,6 @@ const tagSchema = new Schema<ITag>({
   bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Bookmark', default: [] }]
 })
 
-const Tag = mongoose.model('Tag', tagSchema);
+const Tag = mongoose.model<ITag>('Tag', tagSchema);
 
 export default Tag;

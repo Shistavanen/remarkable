@@ -12,6 +12,6 @@ const bookmarkSchema = new Schema<IBookmark>({
   tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }]
 })
 
-const Bookmark = mongoose.model('Bookmark', bookmarkSchema);
+const Bookmark = mongoose.model<IBookmark>('Bookmark', bookmarkSchema);
 
 export default Bookmark;
