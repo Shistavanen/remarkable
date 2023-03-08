@@ -9,14 +9,14 @@ export default async function createBookmark(req: NextApiRequest, res: NextApiRe
 
   const { url, title, tags } = req.body;
 
-  const tagIds = tags.map(async (tag: String) => {
+  const tagIds = await Promise.all(tags.map(async (tag: String) => {
     const existingTag = await Tag.findOne({ name: tag});
     if(existingTag) return existingTag._id;
     const newTag = await Tag.create({ name: tag});
     return newTag._id;
-  });
+  }));
 
-  const newBookmark = await Bookmark.create({ url, title, tags: tagIds });
+  await Bookmark.create({ url, title, tags: tagIds });
 
   res.status(201).send('Bookmark created!');
 }
