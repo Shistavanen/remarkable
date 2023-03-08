@@ -1,8 +1,8 @@
 import mongoose, { Schema } from 'mongoose';
 
 interface IBookmark {
-  url: string,
-  title: string,
+  url: string;
+  title: string;
   tags: Array<{ type: mongoose.Types.ObjectId, ref: 'Tag' }>;
 }
 
