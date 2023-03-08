@@ -14,4 +14,4 @@ const bookmarkSchema = new Schema<IBookmark>({
 
 const Bookmark = mongoose.model<IBookmark>('Bookmark', bookmarkSchema);
 
-export default Bookmark;
+export default mongoose.models.Bookmark || Bookmark;
