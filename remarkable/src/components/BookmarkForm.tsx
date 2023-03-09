@@ -3,6 +3,12 @@ import { Formik, Form, Field, FieldArray, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 
+interface BookmarkFormValues {
+  url: string;
+  title: string;
+  tags: string[];
+}
+
 const initialValues = {
   url: '',
   title: '',
@@ -23,7 +29,7 @@ const validationSchema = Yup.object().shape({
 export default function BookmarkForm() {
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = async (values: Object, { setFieldError }) => {
+  const handleSubmit = async (values: BookmarkFormValues, { setFieldError }: {setFieldError: (field: string, message: string) => void}) => {
     axios
       .post('/api/createBookmark', values)
       .then(res => {
