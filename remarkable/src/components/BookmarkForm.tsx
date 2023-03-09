@@ -23,13 +23,15 @@ const validationSchema = Yup.object().shape({
 export default function BookmarkForm() {
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = async (values: Object) => {
+  const handleSubmit = async (values: Object, { setFieldError }) => {
     axios
       .post('/api/createBookmark', values)
-      .then(res => console.log(res.data))
+      .then(res => {
+        console.log(res.data)
+      })
       .catch(err => {
         console.log(err)
-        if(err.response.data.code === 11000) setErrorMessage('Bookmark already exists');
+        if(err.response.data.code === 11000) setFieldError('url', 'Bookmark already exists');
         else setErrorMessage('Bookmark could not be created at this time');
       });
   }
@@ -48,7 +50,7 @@ export default function BookmarkForm() {
             <div>
               <label htmlFor="url">URL</label>
               <Field type="text" name="url" id="url" />
-              {errors.url && touched.url ? <div>{errors.url}</div> : null}
+              {errors.url && touched.url ? <div style={{color: 'red'}}>{errors.url}</div> : null}
             </div>
             <div>
               <label htmlFor="title">Title</label>
