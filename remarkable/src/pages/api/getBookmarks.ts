@@ -24,12 +24,42 @@ export default async function createBookmark(req: NextApiRequest, res: NextApiRe
   console.log('TAGIDS: ', tagIds);
 
 
-  const bookmarks = await Bookmark.find({
-    tags: {
-      $all: tagIds,
-      $in: tagIds
+  const bookmarks = await Bookmark.aggregate([
+    {
+      $match: {
+        tags: { $in: tagIds }
+      }
+    },
+    {
+      $addFields: {
+        relevance: { $size: { $setIntersection: ["$tags", tagIds] } }
+      }
+    },
+    {
+      $group: {
+        _id: { _id: "$_id", title: "$title" },
+        url: { $first: "$url" },
+        tags: { $addToSet: "$tags" },
+        relevance: { $max: "$relevance" }
+      }
+    },
+    {
+      $project: {
+        _id: "$_id._id",
+        title: "$_id.title",
+        url: 1,
+        tags: 1,
+        relevance: 1
+      }
+    },
+    {
+      $sort: {
+        relevance: -1
+      }
     }
-  }).populate('tags');
+  ])
+
+  console.log('BOOKMARKS: ', bookmarks)
 
   res.status(200).json(bookmarks);
 }

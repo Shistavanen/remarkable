@@ -44,7 +44,7 @@ export default function SearchBar() {
           <ul>
             {bookmarks.map(bookmark => (
               <li key={bookmark._id}>
-                <a href={bookmark.url}>{`${bookmark.title}- ${bookmark.url}`}</a>
+                <a href={bookmark.url} target='_blank'>{`${bookmark.title}- ${bookmark.url}`}</a>
               </li>
             ))}
           </ul>
