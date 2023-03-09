@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import connectDB from '../../../db/db';
-import mongoose from 'mongoose';
 import Bookmark from '@/models/Bookmark';
 import Tag from '@/models/Tag';
 
