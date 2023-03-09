@@ -31,14 +31,6 @@ export default async function createBookmark(req: NextApiRequest, res: NextApiRe
       }
     },
     {
-      $lookup: {
-        from: "tags",
-        localField: "tags",
-        foreignField: "_id",
-        as: "tags"
-      }
-    },
-    {
       $addFields: {
         relevance: { $size: { $setIntersection: ["$tags", tagIds] } }
       }
@@ -47,7 +39,7 @@ export default async function createBookmark(req: NextApiRequest, res: NextApiRe
       $group: {
         _id: { _id: "$_id", title: "$title" },
         url: { $first: "$url" },
-        tags: { $addToSet: "$tags.name" },
+        tags: { $addToSet: "$tags" },
         relevance: { $max: "$relevance" }
       }
     },
@@ -65,7 +57,7 @@ export default async function createBookmark(req: NextApiRequest, res: NextApiRe
         relevance: -1
       }
     }
-  ]);
+  ])
 
   console.log('BOOKMARKS: ', bookmarks)
 
