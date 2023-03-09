@@ -31,42 +31,41 @@ export default async function createBookmark(req: NextApiRequest, res: NextApiRe
       }
     },
     {
-      $addFields: {
-        relevance: { $size: { $setIntersection: ['$tags', tagIds] } }
+      $lookup: {
+        from: "tags",
+        localField: "tags",
+        foreignField: "_id",
+        as: "tags"
       }
     },
     {
-      $match: {
-        $or: [
-          { tags: { $all: tagIds } },
-          { relevance: { $gt: 0 } }
-        ]
+      $addFields: {
+        relevance: { $size: { $setIntersection: ["$tags", tagIds] } }
+      }
+    },
+    {
+      $group: {
+        _id: { _id: "$_id", title: "$title" },
+        url: { $first: "$url" },
+        tags: { $addToSet: "$tags.name" },
+        relevance: { $max: "$relevance" }
+      }
+    },
+    {
+      $project: {
+        _id: "$_id._id",
+        title: "$_id.title",
+        url: 1,
+        tags: 1,
+        relevance: 1
       }
     },
     {
       $sort: {
         relevance: -1
       }
-    },
-    {
-      $group: {
-        _id: "$_id",
-        title: { $first: "$title" },
-        url: { $first: "$url" },
-        tags: { $push: "$tags" },
-        relevance: { $first: "$relevance" }
-      }
-    },
-    {
-      $project: {
-        _id: 1,
-        title: 1,
-        url: 1,
-        tags: 1,
-        relevance: 1
-      }
     }
-  ])
+  ]);
 
   console.log('BOOKMARKS: ', bookmarks)
 
