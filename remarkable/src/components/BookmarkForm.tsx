@@ -1,4 +1,5 @@
-import { Formik, Form, Field, FieldArray } from 'formik';
+import { useState } from 'react';
+import { Formik, Form, Field, FieldArray, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 
@@ -19,14 +20,19 @@ const validationSchema = Yup.object().shape({
     .min(1, 'Please enter at least one tag')
 });
 
-const handleSubmit = async (values: Object) => {
-  axios
-    .post('/api/createBookmark', values)
-    .then(res => console.log(res.data))
-    .catch(err => console.log(err));
-}
-
 export default function BookmarkForm() {
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleSubmit = async (values: Object) => {
+    axios
+      .post('/api/createBookmark', values)
+      .then(res => console.log(res.data))
+      .catch(err => {
+        console.log(err)
+        if(err.response.data.code === 11000) setErrorMessage('Bookmark already exists');
+        else setErrorMessage('Bookmark could not be created at this time');
+      });
+  }
 
   return (
     <div>
@@ -73,6 +79,8 @@ export default function BookmarkForm() {
               </FieldArray>
             </div>
             <button type="submit">Submit</button>
+            <ErrorMessage name="submit" component="div" />
+            {errorMessage && <div>{errorMessage}</div>}
           </Form>
         )}
 
