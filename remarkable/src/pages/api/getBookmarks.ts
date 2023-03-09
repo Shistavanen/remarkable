@@ -27,50 +27,48 @@ export default async function createBookmark(req: NextApiRequest, res: NextApiRe
   const bookmarks = await Bookmark.aggregate([
     {
       $match: {
-        tags: {
-          $all: tagIds
-        }
+        tags: { $in: tagIds }
+      }
+    },
+    {
+      $addFields: {
+        relevance: { $size: { $setIntersection: ['$tags', tagIds] } }
+      }
+    },
+    {
+      $match: {
+        $or: [
+          { tags: { $all: tagIds } },
+          { relevance: { $gt: 0 } }
+        ]
+      }
+    },
+    {
+      $sort: {
+        relevance: -1
+      }
+    },
+    {
+      $group: {
+        _id: "$_id",
+        title: { $first: "$title" },
+        url: { $first: "$url" },
+        tags: { $push: "$tags" },
+        relevance: { $first: "$relevance" }
       }
     },
     {
       $project: {
         _id: 1,
-        url: 1,
         title: 1,
+        url: 1,
         tags: 1,
-        relevance: { $size: { $setIntersection: ['$tags', tagIds] } }
-      }
-    },
-    {
-      $sort: { relevance: -1 }
-    },
-    {
-      $unionWith: {
-        coll: 'bookmarks',
-        pipeline: [
-          {
-            $match: {
-              tags: {
-                $in: tagIds
-              }
-            }
-          },
-          {
-            $project: {
-              _id: 1,
-              url: 1,
-              title: 1,
-              tags: 1,
-              relevance: { $size: { $setIntersection: ['$tags', tagIds] } }
-            }
-          },
-          {
-            $sort: { relevance: -1 }
-          }
-        ]
+        relevance: 1
       }
     }
   ])
+
+  console.log('BOOKMARKS: ', bookmarks)
 
   res.status(200).json(bookmarks);
 }
