@@ -55,7 +55,7 @@ export default function BookmarkForm() {
             <div>
               <label htmlFor="title">Title</label>
               <Field type="text" name="title" id="title" />
-              {errors.title && touched.title ? <div>{errors.title}</div> : null}
+              {errors.title && touched.title ? <div style={{color: 'red'}}>{errors.title}</div> : null}
             </div>
             <div>
               <label htmlFor="tags">Tags</label>
