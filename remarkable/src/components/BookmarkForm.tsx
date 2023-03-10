@@ -1,6 +1,13 @@
-import { Formik, Form, Field, FieldArray } from 'formik';
+import { useState } from 'react';
+import { Formik, Form, Field, FieldArray, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+
+interface BookmarkFormValues {
+  url: string;
+  title: string;
+  tags: string[];
+}
 
 const initialValues = {
   url: '',
@@ -19,14 +26,21 @@ const validationSchema = Yup.object().shape({
     .min(1, 'Please enter at least one tag')
 });
 
-const handleSubmit = async (values: Object) => {
-  axios
-    .post('/api/createBookmark', values)
-    .then(res => console.log(res.data))
-    .catch(err => console.log(err));
-}
-
 export default function BookmarkForm() {
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleSubmit = async (values: BookmarkFormValues, { setFieldError }: {setFieldError: (field: string, message: string) => void}) => {
+    axios
+      .post('/api/createBookmark', values)
+      .then(res => {
+        console.log(res.data)
+      })
+      .catch(err => {
+        console.log(err)
+        if(err.response.data.code === 11000) setFieldError('url', 'Bookmark already exists');
+        else setErrorMessage('Bookmark could not be created at this time');
+      });
+  }
 
   return (
     <div>
@@ -42,12 +56,12 @@ export default function BookmarkForm() {
             <div>
               <label htmlFor="url">URL</label>
               <Field type="text" name="url" id="url" />
-              {errors.url && touched.url ? <div>{errors.url}</div> : null}
+              {errors.url && touched.url ? <div style={{color: 'red'}}>{errors.url}</div> : null}
             </div>
             <div>
               <label htmlFor="title">Title</label>
               <Field type="text" name="title" id="title" />
-              {errors.title && touched.title ? <div>{errors.title}</div> : null}
+              {errors.title && touched.title ? <div style={{color: 'red'}}>{errors.title}</div> : null}
             </div>
             <div>
               <label htmlFor="tags">Tags</label>
@@ -73,6 +87,8 @@ export default function BookmarkForm() {
               </FieldArray>
             </div>
             <button type="submit">Submit</button>
+            <ErrorMessage name="submit" component="div" />
+            {errorMessage && <div>{errorMessage}</div>}
           </Form>
         )}
 
