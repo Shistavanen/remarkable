@@ -37,8 +37,7 @@ export default function BookmarkForm() {
       })
       .catch(err => {
         console.log(err)
-        if(err.response.data.code === 11000) setFieldError('url', 'Bookmark already exists');
-        else setErrorMessage('Bookmark could not be created at this time');
+        setFieldError('url', err.response.data.message);
       });
   }
 
