@@ -21,8 +21,8 @@ export default async function createBookmark(req: NextApiRequest, res: NextApiRe
     res.status(201).send('Bookmark created!');
   } catch(err) {
     console.error('ERR:', err);
-    //const message = err.code === 11000 ? 'Bookmark already exists' : 'Bookmark was unable to be created at this time'
-    res.status(500).send({code: err.code});
+    if(err.code === 11000) return res.status(409).json({message: 'Bookmark already exists'});
+    res.status(500).send({message: 'Bookmark was unable to be created at this time'});
   }
 
 
