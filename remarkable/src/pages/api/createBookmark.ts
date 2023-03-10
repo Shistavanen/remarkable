@@ -9,6 +9,9 @@ export default async function createBookmark(req: NextApiRequest, res: NextApiRe
 
   const { url, title, tags } = req.body;
 
+  const existingBookmark = await Bookmark.findOne({ url });
+  if(existingBookmark) return res.status(409).json({ message: 'Bookmark already exists' });
+
   const tagIds = await Promise.all(tags.map(async (tag: String) => {
     const existingTag = await Tag.findOne({ name: tag});
     if(existingTag) return existingTag._id;
@@ -21,8 +24,7 @@ export default async function createBookmark(req: NextApiRequest, res: NextApiRe
     res.status(201).send('Bookmark created!');
   } catch(err) {
     console.error('ERR:', err);
-    if(err.code === 11000) return res.status(409).json({message: 'Bookmark already exists'});
-    res.status(500).send({message: 'Bookmark was unable to be created at this time'});
+    res.status(500).send({ message: 'Bookmark was unable to be created at this time' });
   }
 
 
