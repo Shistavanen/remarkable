@@ -25,7 +25,6 @@ export default function SearchBar() {
 
   return (
     <div>
-      <h2>Search Bookmarks</h2>
       <Formik
         initialValues={{ tags: '' }}
         validationSchema={SearchSchema}
