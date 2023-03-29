@@ -2,8 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
-import BookmarkForm from '@/components/BookmarkForm'
-import SearchBar from '@/components/SearchBar'
+import InputContainer from '@/components/InputContainer'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,9 +16,8 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <h1>remarkable</h1>
-        <BookmarkForm />
-        <SearchBar />
+        <h1 style={{backgroundColor: '#03449e', color: '#f0f2f5', margin: "2rem", padding: "1rem"}}>remarkable</h1>
+        <InputContainer />
       </main>
     </>
   )
