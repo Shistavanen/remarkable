@@ -43,7 +43,6 @@ export default function BookmarkForm() {
 
   return (
     <div>
-      <h2>Add Bookmark</h2>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
